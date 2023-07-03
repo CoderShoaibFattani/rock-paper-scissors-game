@@ -10,106 +10,81 @@ function getComputerChoice() {
   return randomComputerChoice;
 }
 // created variables for storing data and result
-let answer = "";
-let playerGameWon = 0;
-let computerGameWon = 0;
-let response = {};
+let playerScore = 0;
+let computerScore = 0;
 
 // created playRound function to generate 1 round for the game
-function playRound(playerSelection, computerSelection) {
-  // storing response of user and make is capital case to avoid case sensitive issues
-  let playerChoice =
-    playerSelection[0].toUpperCase() + playerSelection.slice(1);
-  // checking both the responses
-  console.log(playerChoice);
-  console.log(computerSelection);
-  // comparing both responses to declare the winner, loser and tie
-  if (playerChoice == computerSelection) {
-    answer = "Match Draw";
-  } else if (
-    (playerChoice == "Rock" && computerSelection == "Scissors") ||
-    (playerChoice == "Scissors" && computerSelection == "Paper") ||
-    (playerChoice == "Paper" && computerSelection == "Rock")
-  ) {
-    answer = `You Win! ${playerChoice} beats ${computerSelection}`;
-    // increaing counter for player win so that we can declare final result based on score
-    playerGameWon++;
-  } else if (
-    (playerChoice == "Rock" && computerSelection == "Paper") ||
-    (playerChoice == "Scissors" && computerSelection == "Rock") ||
-    (playerChoice == "Paper" && computerSelection == "Scissors")
-  ) {
-    answer = `You Lose! ${computerSelection} beats ${playerChoice}`;
-    // increaing counter for computer win so that we can declare final result based on score
-    computerGameWon++;
+function playRound(e) {
+  const computerSelection = getComputerChoice();
+  const playerSelection = e.target.textContent;
+  // Check for a tie
+  if (playerSelection === computerSelection) {
+    displayResult("It's a tie!");
   }
-  // returning am object to use these values later in main game function
-  return (response = {
-    answer: answer,
-    computerGameWon: computerGameWon,
-    playerGameWon: playerGameWon,
-  });
+  // Check for computer win
+  else if ((playerSelection === "Rock" && computerSelection === "Paper") || (playerSelection === "Paper" && computerSelection === "Scissors") || (playerSelection === "Scissors" && computerSelection === "Rock")) {
+      updateScore("computer");
+      displayResult(`You lose! ${computerSelection} beats ${playerSelection}.`);
+  }
+  // Check for player win
+  else if ((computerSelection === "Rock" && playerSelection === "Paper") || (computerSelection === "Paper" && playerSelection === "Scissors") || (computerSelection === "Scissors" && playerSelection === "Rock")) {
+    updateScore("player");
+    displayResult(`You win! ${playerSelection} beats ${computerSelection}.`);
+  }
+  else {
+    displayResult("Invalid selection. Please choose rock, paper, or scissors.");
+  }
+  // Check for game winner
+  if (playerScore === 5) {
+    announceWinner("You");
+    resetGame();
+  } else if (computerScore === 5) {
+    announceWinner("Computer");
+    resetGame();
+  }
 }
 
-let playerSelection;
-let computerSelection = getComputerChoice();
-
-// this was the work done by me in which I hard coded the function and it was no flexible to catter more games
-// function game (playerSelection, computerSelection) {
-//     let message = "";
-//     playRound(playerSelection, computerSelection)
-//     console.log(response.answer);
-//     let player2 = prompt("Enter Rock, Paper or Scissors").toLowerCase();
-//     let computer2 = getComputerChoice();
-//     playRound(player2, computer2);
-//     console.log(response.answer);
-//     let player3 = prompt("Enter Rock, Paper or Scissors").toLowerCase();
-//     let computer3 = getComputerChoice();
-//     playRound(player3, computer3);
-//     console.log(response.answer);
-//     let player4 = prompt("Enter Rock, Paper or Scissors").toLowerCase();
-//     let computer4 = getComputerChoice();
-//     playRound(player4, computer4);
-//     console.log(response.answer);
-//     let player5 = prompt("Enter Rock, Paper or Scissors").toLowerCase();
-//     let computer5 = getComputerChoice();
-//     playRound(player5, computer5);
-//     console.log(response.answer);
-//     if (response.computerGameWon == response.playerGameWon) {
-//         message = "Match Draw!";
-//     } else if (response.computerGameWon > response.playerGameWon) {
-//         message = "You Lose!";
-//     } else if (response.computerGameWon < response.playerGameWon) {
-//         message = "You Win!";
-//     }
-//     return message;
-// }
-// console.log(game(playerSelection, computerSelection));
-
-// this is the main function which calls playRound function to generate game
-function game(playerSelection, computerSelection) {
-    // this message vairable will display final result
-  let message = "";
-  let i = 1;
-  // created loop till i <= 5 so that the game can have 5 rounds and based on that result will be anounced
-  while (i <= 5) {
-    // getting user input and make it all lower to avoid case sensitive issues
-    playerSelection = prompt("Enter Rock, Paper or Scissors").toLowerCase();
-    // calling playRound for the game and comparision of both the responses
-    playRound(playerSelection, computerSelection);
-    console.log(response.answer);
-    // getting computer response for every round of game
-    computerSelection = getComputerChoice();
-    i++;
-  }
-  // comparing the final results and based on that result will be announced
-  if (response.computerGameWon == response.playerGameWon) {
-    message = "Match Draw!";
-  } else if (response.computerGameWon > response.playerGameWon) {
-    message = "You Lose!";
-  } else if (response.computerGameWon < response.playerGameWon) {
-    message = "You Win!";
-  }
-  return message;
+function displayResult(message) {
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.textContent = message;
 }
-console.log(game(playerSelection, computerSelection));
+
+function updateScore(winner) {
+  if (winner === "player") {
+    playerScore++;
+  } else if (winner === "computer") {
+    computerScore++;
+  }
+
+  const scoreboardDiv = document.getElementById("scoreboard");
+  scoreboardDiv.textContent = `Player: ${playerScore} | Computer: ${computerScore}`;
+}
+
+function announceWinner(winner) {
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.textContent = `${winner} wins the game!`;
+
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach((button) => (button.disabled = true));
+}
+
+function resetGame() {
+  playerScore = 0;
+  computerScore = 0;
+
+  const scoreboardDiv = document.getElementById("scoreboard");
+  scoreboardDiv.textContent = "Player: 0 | Computer: 0";
+
+  const buttons = document.querySelectorAll("button");
+  buttons.forEach((button) => (button.disabled = false));
+}
+
+// Add event listeners to the buttons
+const rockButton = document.getElementById("rock");
+rockButton.addEventListener("click", playRound);
+
+const paperButton = document.getElementById("paper");
+paperButton.addEventListener("click", playRound);
+
+const scissorsButton = document.getElementById("scissors");
+scissorsButton.addEventListener("click", playRound);
