@@ -3,22 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rock Paper Scissor Game</title>
+    <title>Rock Paper Scissors Game</title>
+    <link rel="stylesheet" href="style.css" />
     <script src="./script.js" defer></script>
-    <style>
-      button {
-        margin: 5px;
-      }
-    </style>
   </head>
   <body>
-    <h1>Rock Paper Scissors</h1>
-    <div>
-      <button id="rock">Rock</button>
-      <button id="paper">Paper</button>
-      <button id="scissors">Scissors</button>
+    <div class="game-container">
+      <h1 class="title">Rock Paper Scissors</h1>
+      <div class="button-container">
+        <button id="rock" class="game-button">Rock</button>
+        <button id="paper" class="game-button">Paper</button>
+        <button id="scissors" class="game-button">Scissors</button>
+      </div>
+      <div id="results" class="results"></div>
+      <div id="scoreboard" class="scoreboard">Player: 0 | Computer: 0</div>
     </div>
-    <div id="results"></div>
-    <div id="scoreboard"></div>
   </body>
 </html>
